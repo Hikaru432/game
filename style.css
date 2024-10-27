@@ -110,3 +110,44 @@ canvas {
 #restart-button:hover {
     background-color: #2980b9; /* Darker blue on hover */
 }
+
+/* For mobile responsive */
+
+/* Responsive adjustments for mobile */
+@media (max-width: 600px) {
+    #game-container {
+        width: 100%;
+        padding: 10px;
+    }
+    
+    #animal-selection {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .animal-button {
+        width: 80%;
+        font-size: 16px;
+    }
+    
+    canvas {
+        height: 400px; /* Reduced height for mobile */
+    }
+    
+    #score-display {
+        font-size: 20px;
+    }
+    
+    #game-over-screen h1 {
+        font-size: 28px;
+    }
+    
+    #game-over-screen p {
+        font-size: 20px;
+    }
+    
+    #restart-button {
+        font-size: 18px;
+    }
+}
+
