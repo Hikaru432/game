@@ -16,24 +16,36 @@ const foods = [];
 canvas.width = 900;
 canvas.height = 700;
 
-// Animal-Food pairing
+// Animal-Food pairing and backgrounds
 const animalFood = {
   cow: 'grass',
   lion: 'meat',
   chicken: 'seeds',
 };
 
-// Food images
+// Animal backgrounds
+const animalBackgrounds = {
+  cow: 'img/CowBG.jpg',
+  lion: 'img/LionBG.jpg',
+  chicken: 'img/ChickenBG.jpg',
+};
+
+// Preload food images
 const foodImages = {
   grass: 'img/grass.png',
   meat: 'img/meat.png',
   seeds: 'img/seeds.png',
 };
 
-// Start the game
+Object.keys(foodImages).forEach(type => {
+  const img = new Image();
+  img.src = foodImages[type];
+});
+
+// Start the game with selected animal background
 document.querySelectorAll('.animal-button').forEach(button => {
   button.addEventListener('click', (e) => {
-    selectedAnimal = e.currentTarget.dataset.animal;
+    selectedAnimal = e.target.dataset.animal;
     animalIcon = new Image();
 
     if (selectedAnimal === 'cow') {
@@ -44,11 +56,24 @@ document.querySelectorAll('.animal-button').forEach(button => {
       animalIcon.src = 'img/lion.png';
     }
 
+    // Set background based on selected animal
+    const backgroundPath = animalBackgrounds[selectedAnimal];
+    gameScreen.style.backgroundImage = `url(${backgroundPath})`;
+    gameScreen.style.backgroundSize = 'cover';
+
     startScreen.classList.add('hidden');
     gameScreen.classList.remove('hidden');
     startGame();
   });
 });
+
+
+// Set background based on selected animal with gradient
+const gradientColor = 'rgba(0, 0, 0, 0.5)'; // Example: black with 50% opacity
+const backgroundPath = animalBackgrounds[selectedAnimal];
+gameScreen.style.backgroundImage = `linear-gradient(${gradientColor}, ${gradientColor}), url(${backgroundPath})`;
+gameScreen.style.backgroundSize = 'cover';
+
 
 // Food constructor
 class Food {
@@ -56,7 +81,7 @@ class Food {
     this.type = type;
     this.x = Math.random() * (canvas.width - 60);
     this.y = 0;
-    this.speed = Math.random() * 1 + 0.5; // Slower speed range
+    this.speed = Math.random() * 1 + 0.5;
     this.image = new Image();
     this.image.src = foodImages[type];
   }
@@ -85,8 +110,8 @@ function startGame() {
   gameInterval = setInterval(() => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // 85% chance for preferred food, 15% for random other foods
-    if (Math.random() < 0.03) {
+    // Ensure only up to 5 foods fall at once, with 85% chance of preferred food
+    if (foods.length < 5) {
       const foodType = Math.random() < 0.85
         ? animalFood[selectedAnimal]
         : getRandomFoodType(selectedAnimal);
@@ -148,10 +173,14 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Mobile touch controls
-canvas.addEventListener('touchmove', (e) => {
-  const touchX = e.touches[0].clientX - canvas.getBoundingClientRect().left;
-  animalX = touchX - 50; // Center the animal at the touch position
-  if (animalX < 0) animalX = 0;
-  if (animalX > canvas.width - 100) animalX = canvas.width - 100;
+// Mobile controls
+document.getElementById('move-left').addEventListener('click', () => {
+  if (animalX > 0) {
+    animalX -= animalSpeed;
+  }
+});
+document.getElementById('move-right').addEventListener('click', () => {
+  if (animalX < canvas.width - 120) {
+    animalX += animalSpeed;
+  }
 });
